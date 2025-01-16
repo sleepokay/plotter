@@ -1,4 +1,5 @@
 import math
+from common import exec_hpgl
 
 angle_even = math.radians(30)  # angle for even numbers
 angle_odd = math.radians(-60)  # angle for odd numbers
@@ -35,21 +36,22 @@ def generate_collatz_path(n):
         path.append((x, y))
 
     return path
-    # generate hpgl commands for a given collatz number path
-    def generate_hpgl_path(path):
-        instructions = []
 
-        start_x, start_y = path[0]
-        instructions.append(f"PU{int(start_x)},{int(start_y)};")
-        # instructions.append("PD;")  # pen down
+# generate hpgl commands for a given collatz number path
+def generate_hpgl_path(path):
+    instructions = []
 
-        for x, y in path[1:]:
-            # ensure the coordinates are within the bounding box
-            x = max(0, min(x, 8636))
-            y = max(0, min(y, 11176))
-            instructions.append(f"PD{int(x)},{int(y)};")
-        instructions.append("PU;")  # pen up
-        return instructions
+    start_x, start_y = path[0]
+    instructions.append(f"PU{int(start_x)},{int(start_y)};")
+    # instructions.append("PD;")  # pen down
+
+    for x, y in path[1:]:
+        # ensure the coordinates are within the bounding box
+        x = max(0, min(x, 8636))
+        y = max(0, min(y, 11176))
+        instructions.append(f"PD{int(x)},{int(y)};")
+    instructions.append("PU;")  # pen up
+    return instructions
 
 
 if __name__ == "__main__":
@@ -69,4 +71,4 @@ if __name__ == "__main__":
     hpgl_commands.append("SP0;")  # Deselect pen
     hpgl_commands.append("IN;")  # Reset plotter
 
-    exec_hpgl(instructions, port=port, speed=speed)
+    exec_hpgl(hpgl_commands, port=port, speed=speed)
